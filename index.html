@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#635bff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Percently">
+  <link rel="manifest" href="manifest.webmanifest">
+  <title>Percently — Percentage Calculator</title>
+  <style>
+    :root { color-scheme: light; --ink:#172033; --muted:#68728a; --brand:#635bff; --brand-dark:#5048e5; --line:#e5e8f0; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; color:var(--ink); background:linear-gradient(145deg,#eef0ff 0%,#f8f9fc 48%,#e8f7f3 100%); display:grid; place-items:center; padding:20px; }
+    main { width:min(100%,430px); }
+    .card { background:rgba(255,255,255,.94); border:1px solid rgba(255,255,255,.85); border-radius:28px; padding:28px; box-shadow:0 18px 50px rgba(45,49,90,.14); }
+    .logo { width:52px; height:52px; display:grid; place-items:center; border-radius:16px; color:white; font-size:25px; font-weight:800; background:linear-gradient(135deg,var(--brand),#8b72ff); box-shadow:0 8px 18px rgba(99,91,255,.28); }
+    h1 { margin:18px 0 5px; font-size:30px; letter-spacing:-.8px; }
+    .subtitle { margin:0 0 25px; color:var(--muted); font-size:15px; }
+    label { display:block; margin:16px 0 8px; font-size:14px; font-weight:700; }
+    .input-wrap { position:relative; }
+    input { width:100%; border:2px solid var(--line); border-radius:14px; padding:15px 46px 15px 16px; font:inherit; font-size:20px; outline:0; color:var(--ink); background:#fbfcff; transition:.2s; }
+    input:focus { border-color:var(--brand); box-shadow:0 0 0 4px rgba(99,91,255,.12); }
+    .suffix { position:absolute; right:16px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:19px; font-weight:700; }
+    button { width:100%; border:0; border-radius:14px; padding:16px; margin-top:24px; color:#fff; background:var(--brand); font:inherit; font-size:17px; font-weight:800; cursor:pointer; box-shadow:0 8px 16px rgba(99,91,255,.24); }
+    button:active { transform:translateY(1px); background:var(--brand-dark); }
+    .result { min-height:88px; display:grid; place-items:center; text-align:center; margin-top:22px; padding:16px; border-radius:16px; background:#f1f0ff; color:#302a93; font-size:22px; font-weight:800; }
+    .result small { display:block; margin-top:5px; color:var(--muted); font-size:13px; font-weight:500; }
+    .tip { margin:20px 2px 0; color:var(--muted); text-align:center; font-size:13px; line-height:1.5; }
+    @media (max-width:360px) { .card { padding:22px; } h1 { font-size:27px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="card" aria-labelledby="title">
+      <div class="logo" aria-hidden="true">%</div>
+      <h1 id="title">Percentage calculator</h1>
+      <p class="subtitle">Find a percentage of any number in seconds.</p>
+      <form id="calculator">
+        <label for="number">Number</label>
+        <div class="input-wrap"><input id="number" type="number" inputmode="decimal" placeholder="100" step="any" required></div>
+        <label for="percent">Percentage</label>
+        <div class="input-wrap"><input id="percent" type="number" inputmode="decimal" placeholder="12" step="any" required><span class="suffix">%</span></div>
+        <button type="submit">Calculate</button>
+      </form>
+      <div class="result" id="result" aria-live="polite">Your result will appear here</div>
+      <p class="tip">Example: 12% of 100 = 12</p>
+    </section>
+  </main>
+  <script>
+    const form = document.querySelector('#calculator');
+    const result = document.querySelector('#result');
+    const format = value => Number.isInteger(value) ? value : Number(value.toFixed(6));
+    form.addEventListener('submit', event => {
+      event.preventDefault();
+      const number = Number(document.querySelector('#number').value);
+      const percent = Number(document.querySelector('#percent').value);
+      if (!Number.isFinite(number) || !Number.isFinite(percent)) return;
+      result.innerHTML = `${format(percent)}% of ${format(number)} = <strong>${format(number * percent / 100)}</strong><small>Calculated instantly</small>`;
+    });
+    if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js'));
+  </script>
+</body>
+</html>
